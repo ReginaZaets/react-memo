@@ -139,6 +139,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         }
         return;
       }
+      finishGame(STATUS_WON);
     }
 
     // Открытые карты на игровом поле
@@ -191,7 +192,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
               return card;
             });
             setCards(updatedCards);
-          }, 1000); // Показываем карты на 2 секунды
+          }, 1000); // Показываем карты на 1 секунду
         }
         // Уменьшаем количество жизней
         DecreaseLives();
@@ -276,7 +277,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
             {easyMode === true ? (
               <div>
                 <p className={styles.easyMode}>
-                  Осталось: <span>{isLives} попытки</span>
+                  Осталось: <span>{isLives} жизни</span>
                 </p>
               </div>
             ) : null}
