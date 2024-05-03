@@ -70,3 +70,11 @@
 
   margin-bottom: -12px;
 }
+
+.easyMode {
+  font-size: 20px;
+  line-height: 30px;
+  display: flex;
+  color: #fff;
+  flex-direction: column;
+}

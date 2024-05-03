@@ -1,10 +1,11 @@
 import { shuffle } from "lodash";
-import { useEffect, useState } from "react";
+import { useCallback, useContext, useEffect, useState } from "react";
 import { generateDeck } from "../../utils/cards";
 import styles from "./Cards.module.css";
 import { EndGameModal } from "../../components/EndGameModal/EndGameModal";
 import { Button } from "../../components/Button/Button";
 import { Card } from "../../components/Card/Card";
+import { EasyModeContext } from "../../utils/contextMode";
 
 // Игра закончилась
 const STATUS_LOST = "STATUS_LOST";
@@ -41,6 +42,9 @@ function getTimerValue(startDate, endDate) {
  * previewSeconds - сколько секунд пользователь будет видеть все карты открытыми до начала игры
  */
 export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
+  // Вызываем легкий режим
+  const { easyMode, isLives, setIsLives } = useContext(EasyModeContext);
+
   // В cards лежит игровое поле - массив карт и их состояние открыта\закрыта
   const [cards, setCards] = useState([]);
   // Текущий статус игры
@@ -57,17 +61,34 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     minutes: 0,
   });
 
+  // Стейт для упрощенного режима- 3 жизни
+  // const [isLives, setIsLives] = useState(3);
+
+  // Функция для уменьшения количества жизней
+  const DecreaseLives = () => {
+    if (isLives > 0) {
+      setIsLives(prevLives => prevLives - 1);
+    }
+  };
+
+  // Функция для обновления количества жизней в новой игре
+  const ResetLives = useCallback(() => {
+    setIsLives(3);
+  }, [setIsLives]);
+
   function finishGame(status = STATUS_LOST) {
     setGameEndDate(new Date());
     setStatus(status);
   }
-  function startGame() {
+  // Используем useCallback для создания функции startGame, чтобы она не менялась при каждом рендере(ругается линтер)
+  const startGame = useCallback(() => {
     const startDate = new Date();
     setGameEndDate(null);
     setGameStartDate(startDate);
     setTimer(getTimerValue(startDate, null));
     setStatus(STATUS_IN_PROGRESS);
-  }
+    ResetLives();
+  }, [ResetLives]);
   function resetGame() {
     setGameStartDate(null);
     setGameEndDate(null);
@@ -105,8 +126,19 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
     // Победа - все карты на поле открыты
     if (isPlayerWon) {
-      finishGame(STATUS_WON);
-      return;
+      if (easyMode === true) {
+        // Уменьшаем количество жизней
+        DecreaseLives();
+        // Проверяем, если игрок потерял все жизни
+        if (isLives < 1) {
+          finishGame(STATUS_LOST);
+          alert("Вы проиграли все жизни! Игра окончена.");
+          resetGame();
+        } else {
+          finishGame(STATUS_WON);
+        }
+        return;
+      }
     }
 
     // Открытые карты на игровом поле
@@ -115,7 +147,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     // Ищем открытые карты, у которых нет пары среди других открытых
     const openCardsWithoutPair = openCards.filter(card => {
       const sameCards = openCards.filter(openCard => card.suit === openCard.suit && card.rank === openCard.rank);
-
+      // Если есть пара, оставляем карты открытыми?
       if (sameCards.length < 2) {
         return true;
       }
@@ -125,9 +157,53 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
     const playerLost = openCardsWithoutPair.length >= 2;
 
-    // "Игрок проиграл", т.к на поле есть две открытые карты без пары
+    // // "Игрок проиграл", т.к на поле есть две открытые карты без пары
+    // if (playerLost) {
+    //   finishGame(STATUS_LOST);
+    //   return;
+    // }
+
+    // Проверяем, если игрок проиграл (например, если на поле есть две открытые карты без пары)
+    // const playerLost = openCardsWithoutPair.length >= 2;
     if (playerLost) {
-      finishGame(STATUS_LOST);
+      if (easyMode === true) {
+        // Этот код закрывает две последние не правильно подобранные карты, если они подходят, то они остаются открытыми
+        // Проверяем, если ли среди открытых карт те, кто не имеет пару
+        if (openCardsWithoutPair.length > 0) {
+          // Создаем массив, который содержит две последние открытые карты
+          const lastTwoCard = openCardsWithoutPair.slice(-2).map(card => card.id);
+          // Создаем массив, который проверяет карточки по айди
+          const updatedCard = nextCards.map(card => {
+            // Проверяем есть ли текущий айди карты в массиве lastTwoCard
+            if (lastTwoCard.includes(card.id)) {
+              return { ...card, open: true };
+            }
+            return card;
+          });
+          // Обновляем состояние карт
+          setCards(updatedCard);
+          // Показываем карты на пару секунд, а затем закрываем их
+          setTimeout(() => {
+            const updatedCards = nextCards.map(card => {
+              if (lastTwoCard.includes(card.id)) {
+                return { ...card, open: false }; // Закрываем неправильные карты
+              }
+              return card;
+            });
+            setCards(updatedCards);
+          }, 1000); // Показываем карты на 2 секунды
+        }
+        // Уменьшаем количество жизней
+        DecreaseLives();
+        // Проверяем, если игрок потерял все жизни
+        if (isLives <= 1) {
+          finishGame(STATUS_LOST);
+          // alert("Вы проиграли все жизни! Игра окончена.");
+          // resetGame();
+        }
+      } else {
+        finishGame(STATUS_LOST);
+      }
       return;
     }
 
@@ -160,7 +236,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     return () => {
       clearTimeout(timerId);
     };
-  }, [status, pairsCount, previewSeconds]);
+  }, [status, pairsCount, previewSeconds, startGame]);
 
   // Обновляем значение таймера в интервале
   useEffect(() => {
@@ -195,7 +271,18 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
             </>
           )}
         </div>
-        {status === STATUS_IN_PROGRESS ? <Button onClick={resetGame}>Начать заново</Button> : null}
+        {status === STATUS_IN_PROGRESS ? (
+          <>
+            {easyMode === true ? (
+              <div>
+                <p className={styles.easyMode}>
+                  Осталось: <span>{isLives} попытки</span>
+                </p>
+              </div>
+            ) : null}
+            <Button onClick={resetGame}>Начать заново</Button>{" "}
+          </>
+        ) : null}
       </div>
 
       <div className={styles.cards}>

@@ -62,3 +62,9 @@
 .levelLink:visited {
   color: #0080c1;
 }
+
+.checkbox {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+}
