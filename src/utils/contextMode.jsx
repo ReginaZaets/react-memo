@@ -6,6 +6,10 @@ export function EasyModeProvider({ children }) {
   const [easyMode, setEasyMode] = useState(false);
   // Стейт для упрощенного режима- 3 жизни
   const [isLives, setIsLives] = useState(3);
+  // Стейт для уровня сложности игры
+  const [level, setLevel] = useState(null);
+  // Список лидеров
+  const [leaders, setLeaders] = useState([]);
 
   const toggleMode = () => {
     if (easyMode === true) {
@@ -16,7 +20,9 @@ export function EasyModeProvider({ children }) {
   };
 
   return (
-    <EasyModeContext.Provider value={{ isLives, easyMode, toggleMode, setIsLives }}>
+    <EasyModeContext.Provider
+      value={{ leaders, setLeaders, isLives, easyMode, toggleMode, setIsLives, level, setLevel }}
+    >
       {children}
     </EasyModeContext.Provider>
   );

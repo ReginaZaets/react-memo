@@ -60,6 +60,10 @@
   text-decoration: none;
 }
 
+.level:hover {
+  border: 2px solid rgb(0, 4, 255);
+}
+
 .levelLink:visited {
   color: #0080c1;
 }
@@ -115,4 +119,8 @@
   font-size: 22px;
   font-family: StratosSkyeng;
   font-style: normal;
+}
+
+.lableInput {
+  display: none;
 }
