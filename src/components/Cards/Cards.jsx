@@ -7,6 +7,7 @@ import { Button } from "../../components/Button/Button";
 import { Card } from "../../components/Card/Card";
 import { EasyModeContext } from "../../utils/contextMode";
 import { Link } from "react-router-dom";
+import SuperPower from "../SuperPower/SuperPower";
 
 // Игра закончилась
 const STATUS_LOST = "STATUS_LOST";
@@ -282,6 +283,7 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
                 </p>
               </div>
             ) : null}
+            <SuperPower />
             <Button onClick={resetGame}>Начать заново</Button>{" "}
           </>
         ) : null}
