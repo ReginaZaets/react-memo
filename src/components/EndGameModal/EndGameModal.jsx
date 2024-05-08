@@ -17,8 +17,11 @@ export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, 
   const time = gameDurationSeconds + gameDurationMinutes * 60;
   //уровень сложности + список лидеров из апи
   const { setLeaders, level } = useContext(EasyModeContext);
+  if (!user) {
+    setUser("Пользователь");
+  }
   useEffect(() => {
-    if (+level === 9 && isWon) {
+    if (+level === 3 && isWon) {
       GetLeader()
         .then(response => {
           // на основе готового массива, мы сортируем список лидеров по убыванию времени
