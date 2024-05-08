@@ -6,6 +6,7 @@ import { EndGameModal } from "../../components/EndGameModal/EndGameModal";
 import { Button } from "../../components/Button/Button";
 import { Card } from "../../components/Card/Card";
 import { EasyModeContext } from "../../utils/contextMode";
+import { Link } from "react-router-dom";
 
 // Игра закончилась
 const STATUS_LOST = "STATUS_LOST";
@@ -60,10 +61,8 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
     seconds: 0,
     minutes: 0,
   });
-
-  // Стейт для упрощенного режима- 3 жизни
-  // const [isLives, setIsLives] = useState(3);
-
+  // Стейт для открытия только двух карт
+  const [isBlockedOpen, seIsBlockedOpen] = useState(false);
   // Функция для уменьшения количества жизней
   const DecreaseLives = () => {
     if (isLives > 0) {
@@ -104,6 +103,10 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
    * - "Игра продолжается", если не случилось первых двух условий
    */
   const openCard = clickedCard => {
+    // Проверяем, если карт не две, то ничего не делаем
+    if (isBlockedOpen) {
+      return;
+    }
     // Если карта уже открыта, то ничего не делаем
     if (clickedCard.open) {
       return;
@@ -158,12 +161,6 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
 
     const playerLost = openCardsWithoutPair.length >= 2;
 
-    // // "Игрок проиграл", т.к на поле есть две открытые карты без пары
-    // if (playerLost) {
-    //   finishGame(STATUS_LOST);
-    //   return;
-    // }
-
     // Проверяем, если игрок проиграл (например, если на поле есть две открытые карты без пары)
     // const playerLost = openCardsWithoutPair.length >= 2;
     if (playerLost) {
@@ -171,6 +168,8 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
         // Этот код закрывает две последние не правильно подобранные карты, если они подходят, то они остаются открытыми
         // Проверяем, если ли среди открытых карт те, кто не имеет пару
         if (openCardsWithoutPair.length > 0) {
+          // Если открыты 2 карты, мы меняем состояние карт на закрытые
+          seIsBlockedOpen(true);
           // Создаем массив, который содержит две последние открытые карты
           const lastTwoCard = openCardsWithoutPair.slice(-2).map(card => card.id);
           // Создаем массив, который проверяет карточки по айди
@@ -191,6 +190,8 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
               }
               return card;
             });
+            // Обратно меняет состояние блокировки карт, чтобы можно было нажать на карты
+            seIsBlockedOpen(false);
             setCards(updatedCards);
           }, 1000); // Показываем карты на 1 секунду
         }
@@ -306,6 +307,13 @@ export function Cards({ pairsCount = 3, previewSeconds = 5 }) {
             gameDurationMinutes={timer.minutes}
             onClick={resetGame}
           />
+        </div>
+      ) : null}
+      {status === STATUS_IN_PROGRESS ? (
+        <div className={styles.linkButton}>
+          <Link to="/">
+            <Button>Перейти к играм</Button>
+          </Link>
         </div>
       ) : null}
     </div>

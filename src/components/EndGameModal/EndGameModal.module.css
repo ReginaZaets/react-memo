@@ -58,7 +58,6 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  gap: 10px;
 }
 
 .input {
@@ -71,6 +70,7 @@
   font-weight: 400;
   font-size: 20px;
   line-height: 133%;
+  margin-bottom: 10px;
 }
 
 .titles {

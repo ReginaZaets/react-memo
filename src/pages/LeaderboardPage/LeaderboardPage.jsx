@@ -53,6 +53,11 @@ const LeaderboardPage = () => {
             })}
           </tbody>
         </table>
+        <div className={styles.linkButton}>
+          <Link to="/">
+            <Button>Перейти к играм</Button>
+          </Link>
+        </div>
       </div>
     </div>
   );
