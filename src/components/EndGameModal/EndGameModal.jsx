@@ -16,12 +16,12 @@ export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, 
   const [user, setUser] = useState("");
   const time = gameDurationSeconds + gameDurationMinutes * 60;
   //уровень сложности + список лидеров из апи
-  const { setLeaders, level } = useContext(EasyModeContext);
-  if (!user) {
-    setUser("Пользователь");
-  }
+  const { setLeaders, level, easyMode, useEyes, useCard } = useContext(EasyModeContext);
+  // if (!user || user !== "") {
+  //   setUser("Пользователь");
+  // }
   useEffect(() => {
-    if (+level === 9 && isWon) {
+    if (+level === 3 && isWon) {
       GetLeader()
         .then(response => {
           // на основе готового массива, мы сортируем список лидеров по убыванию времени
@@ -46,7 +46,14 @@ export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, 
   // Функция на кнопку добавить в лидерборд
   const handleClick = async e => {
     e.preventDefault();
-    await AddLeader({ name: user, time: time })
+    const achievements = [];
+    if (!easyMode) {
+      achievements.push(1);
+    }
+    if (!useEyes && !useCard) {
+      achievements.push(2);
+    }
+    await AddLeader({ name: user, time, achievements })
       .then(response => {
         setLeaders(response.leaders);
       })
@@ -77,7 +84,8 @@ export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, 
         <Button onClick={handleClick}>Добавить</Button>
         <p className={styles.description}>Затраченное время:</p>
         <div className={styles.time}>
-          {gameDurationMinutes.toString().padStart("2", "0")}.{gameDurationSeconds.toString().padStart("2", "0")}
+          {gameDurationMinutes !== undefined ? gameDurationMinutes.toString().padStart("2", "0") : "00"}.
+          {gameDurationSeconds !== undefined ? gameDurationSeconds.toString().padStart("2", "0") : "00"}
         </div>
         <Button onClick={onClick}>Начать сначала</Button>
         <Link to="/leaderboard">
@@ -94,7 +102,8 @@ export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, 
         <h2 className={styles.title}>{title}</h2>
         <p className={styles.description}>Затраченное время:</p>
         <div className={styles.time}>
-          {gameDurationMinutes.toString().padStart("2", "0")}.{gameDurationSeconds.toString().padStart("2", "0")}
+          {gameDurationMinutes !== undefined ? gameDurationMinutes.toString().padStart("2", "0") : "00"}.
+          {gameDurationSeconds !== undefined ? gameDurationSeconds.toString().padStart("2", "0") : "00"}
         </div>
         <Button onClick={onClick}>Начать сначала</Button>
         <Link to="/">

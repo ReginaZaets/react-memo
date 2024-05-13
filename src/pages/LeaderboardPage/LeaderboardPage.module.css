@@ -33,8 +33,8 @@
   padding: 16px 20px;
   box-sizing: border-box;
 }
-.leaderboard th {
-  font-family: sans-serif;
+.leaderboard p {
+  font-family: Poppins;
   font-weight: 400;
   font-size: 20px;
   line-height: 133%;
@@ -68,16 +68,55 @@
   padding: 16px 20px;
   box-sizing: border-box;
 }
-.leaderboards th {
-  font-family: sans-serif;
+
+.linkButton {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 30px;
+}
+
+.line {
+  font-family: Poppins;
   font-weight: 400;
   font-size: 20px;
   line-height: 133%;
   color: #000000;
 }
 
-.linkButton {
+.nameAch {
   display: flex;
-  justify-content: flex-end;
-  margin-top: 30px;
+  width: 360px;
+  justify-content: space-between;
+}
+
+.hasModes {
+  position: relative;
+  display: inline-block;
+}
+
+.hasMode {
+  visibility: hidden;
+  width: 212px;
+  height: 60px;
+  background-color: #c2f5ff;
+  text-align: center;
+  border-radius: 12px;
+  padding: 8px 0;
+  position: absolute;
+  z-index: 1;
+  bottom: 105%;
+  left: 50%;
+  margin-left: -80px;
+  transition: opacity 0.3s ease-in-out; /* Плавное появление */
+}
+.hasMode p {
+  font-family: Inter;
+  color: #004980;
+  font-size: 18px;
+  text-align: center;
+  line-height: 24px;
+}
+.imageHasModes:hover + .hasMode {
+  visibility: visible;
+  opacity: 1;
 }
