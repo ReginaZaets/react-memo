@@ -21,7 +21,7 @@ export function EndGameModal({ isWon, gameDurationSeconds, gameDurationMinutes, 
   //   setUser("Пользователь");
   // }
   useEffect(() => {
-    if (+level === 3 && isWon) {
+    if (+level === 9 && isWon) {
       GetLeader()
         .then(response => {
           // на основе готового массива, мы сортируем список лидеров по убыванию времени
