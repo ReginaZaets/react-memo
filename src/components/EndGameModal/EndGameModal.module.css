@@ -23,7 +23,6 @@
   font-style: normal;
   font-weight: 400;
   line-height: 48px;
-
   margin-bottom: 28px;
 }
 
@@ -48,4 +47,47 @@
   line-height: 72px;
 
   margin-bottom: 40px;
+}
+
+.modals {
+  width: 480px;
+  height: 650px;
+  border-radius: 12px;
+  background: #c2f5ff;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.input {
+  width: 200px;
+  border-radius: 8px;
+  border: 0.7px solid rgba(148, 166, 190, 0.4);
+  outline: none;
+  padding: 10px 8px;
+  font-family: sans-serif;
+  font-weight: 400;
+  font-size: 20px;
+  line-height: 133%;
+  margin-bottom: 10px;
+}
+
+.titles {
+  color: #004980;
+  font-variant-numeric: lining-nums proportional-nums;
+  font-family: StratosSkyeng;
+  font-size: 40px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 48px;
+  margin-bottom: 28px;
+  margin-left: 120px;
+}
+
+.text {
+  color: #1a4466;
+  font-size: 22px;
+  font-family: StratosSkyeng;
+  font-style: normal;
 }
